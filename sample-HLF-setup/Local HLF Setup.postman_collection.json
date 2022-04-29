@@ -1,0 +1,335 @@
+{
+	"info": {
+		"_postman_id": "de850c1a-025b-4100-97b6-5af048cc3a59",
+		"name": "Local HLF Setup",
+		"description": "Collection of APIs for VLF HF Agent.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register and Enrol User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"admin\",\n\t\"orgName\": \"asu\",\n\t\"role\": \"client\",\n\t\"secret\": \"ff7ff4f5e61dd14603f3210a2a272c08\"\n}\n\n"
+				},
+				"url": {
+					"raw": "http://0.0.0.0:4000/users/register",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "4000",
+					"path": [
+						"users",
+						"register"
+					]
+				},
+				"description": "Generated from a curl request: \ncurl -s -X POST http://localhost:4000/users -H \\\"content-type: application/x-www-form-urlencoded\\\" -d 'username=agileApp221&orgName=Org1'\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Install Smart Contract",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "content-type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"peers\": [\n\t\t\"peer0.machine1.asu.edu\",\n        \"peer1.machine1.asu.edu\",\n        \"peer2.machine1.asu.edu\"\n\t],\n\t\"chaincodeName\":\"patientSC\",\n\t\"chaincodePath\":\"/home/akuma254/Downloads/CSE598/assignment1/p1\",\n\t\"chaincodeType\": \"node\",\n\t\"chaincodeVersion\":\"v1.0.0\"\n}\n\n"
+				},
+				"url": {
+					"raw": "http://0.0.0.0:4000/chaincodes",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "4000",
+					"path": [
+						"chaincodes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Instantiate Smart Contract",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"chaincodeName\": \"patientSC\",\n    \"peers\": [\"peer0.machine1.asu.edu\", \"peer1.machine1.asu.edu\", \"peer2.machine1.asu.edu\"],\n\t\"chaincodeVersion\": \"v1.0.0\",\n\t\"chaincodeType\": \"node\",\n\t\"args\": [],\n\t\"policy\":{\n\t\t\"identities\": [\n\t\t\t{\"role\": \n\t\t\t\t{\n\t\t\t\t\t\"name\": \"member\", \n\t\t\t\t\t\"mspId\": \"asuMSP\"\n\t\t\t\t} \n            }\n\t\t],\n\t\t\"policy\": {\n\t\t\t\"1-of\":[\n\t\t\t\t{\n\t\t\t\t\t\"signed-by\": 0\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://0.0.0.0:4000/channels/asuchannel/chaincodes",
+					"protocol": "http",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "4000",
+					"path": [
+						"channels",
+						"asuchannel",
+						"chaincodes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upgrade SC",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"chaincodeName\": \"patientSC\",\n    \"peers\": [\"peer0.machine1.asu.edu\", \"peer1.machine1.asu.edu\", \"peer2.machine1.asu.edu\"],\n\t\"chaincodeVersion\": \"v1.2.0\",\n\t\"chaincodeType\": \"node\",\n\t\"args\": [],\n\t\"policy\":{\n\t\t\"identities\": [\n\t\t\t{\"role\": \n\t\t\t\t{\n\t\t\t\t\t\"name\": \"member\", \n\t\t\t\t\t\"mspId\": \"asuMSP\"\n\t\t\t\t} \n\t\t\t}\n\t\t],\n\t\t\"policy\": {\n\t\t\t\"1-of\":[\n\t\t\t\t{\n\t\t\t\t\t\"signed-by\": 0\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost:4000/channels/asuchannel/chaincodes-upgrade",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"channels",
+						"asuchannel",
+						"chaincodes-upgrade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Record",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"peers\": [\"peer0.machine1.asu.edu\"],\n    \"fcn\": \"createPatientRecord\",\n\t\"args\": [\"johnASU\", \"john1\", \"date1\", \"M\", \"B\"]\n}"
+				},
+				"url": {
+					"raw": "http://{{url}}/channels/{{channel_name}}/chaincodes/{{chaincode_name}}",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"channels",
+						"{{channel_name}}",
+						"chaincodes",
+						"{{chaincode_name}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Record",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"peers\": [\"peer0.machine1.asu.edu\"],\n    \"fcn\": \"getPatientByKey\",\n\t\"args\": [\"johnASU\", \"john\"]\n}"
+				},
+				"url": {
+					"raw": "http://{{url}}/channels/{{channel_name}}/chaincodes/{{chaincode_name}}",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"channels",
+						"{{channel_name}}",
+						"chaincodes",
+						"{{chaincode_name}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Record By Blood Type",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"peers\": [\"peer0.machine1.asu.edu\"],\n    \"fcn\": \"queryByBlood_Type\",\n\t\"args\": [\"B\"]\n}"
+				},
+				"url": {
+					"raw": "http://{{url}}/channels/{{channel_name}}/chaincodes/{{chaincode_name}}",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"channels",
+						"{{channel_name}}",
+						"chaincodes",
+						"{{chaincode_name}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get record by Gender type",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"peers\": \"peer0.machine1.asu.edu\",\n    \"fcn\": \"queryByGender\",\n\t\"args\": \"M\"\n}"
+				},
+				"url": {
+					"raw": "http://{{url}}/channels/{{channel_name}}/chaincodes/{{chaincode_name}}",
+					"protocol": "http",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"channels",
+						"{{channel_name}}",
+						"chaincodes",
+						"{{chaincode_name}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "35.235.92.92:4000",
+			"value": "url"
+		}
+	]
+}

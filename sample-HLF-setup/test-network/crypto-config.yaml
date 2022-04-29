@@ -1,0 +1,17 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: orderer.org
+    Specs:
+      - Hostname: orderer0
+PeerOrgs:
+  - Name: asu
+    Domain: asu.edu
+    Specs:
+      - Hostname: peer0.machine1
+      - Hostname: peer1.machine1
+      - Hostname: peer2.machine1
+    EnableNodeOUs: true
+    Template:
+      Count: 3
+    Users:
+      Count: 1

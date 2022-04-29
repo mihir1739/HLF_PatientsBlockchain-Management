@@ -1,0 +1,225 @@
+version: '2'
+volumes:
+  peer0.machine1.asu.edu: {}
+  peer1.machine1.asu.edu: {}
+  peer2.machine1.asu.edu: {}
+networks:
+  basic:  
+    name: asu
+services:
+  couchdb2:
+    container_name: couchdb2
+    image: 'vizlore/fabric-couchdb:latest'
+    restart: always
+    ports:
+      - '7984:5984'
+    environment:
+      - GODEBUG=netdns=go
+      - 'DB_URL:http://localhost:7984/member_db'
+    networks:
+      - basic
+  peer0.machine1.asu.edu:
+    container_name: peer0.machine1.asu.edu
+    image: 'vizlore/fabric-peer:latest'
+    logging:
+      options:
+        max-size: 10m
+    restart: always
+    environment:
+      - GODEBUG=netdns=go
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - 'CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:1.4'
+      #- 'CORE_PEER_CHAINCODEADDRESS=peer0.machine1.asu.edu:7052'
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - 'CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock'
+      - CORE_PEER_ID=peer0.machine1.asu.edu
+      - 'CORE_PEER_ADDRESS=peer0.machine1.asu.edu:7051'
+      - 'CORE_PEER_LISTENADDRESS=0.0.0.0:7051'
+      - 'CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052'
+      - CORE_PEER_LOCALMSPID=asuMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp/
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - 'CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984'
+      - 'CORE_PEER_GOSSIP_BOOTSTRAP=peer0.machine1.asu.edu:7051'
+      - 'CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.machine1.asu.edu:7051'
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - 'CORE_OPERATIONS_LISTENADDRESS=peer0.machine1.asu.edu:8125'
+      - CORE_METRICS_PROVIDER=statsd
+      - 'CORE_METRICS_STATSD_ADDRESS=graphite:8125'
+      - CORE_METRICS_STATSD_NETWORK=udp
+      - CORE_METRICS_STATSD_PREFIX=PEER_0
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    ports:
+      - '7051:7051'
+      - '7053:7053'
+      - '7052:7052'
+      - '8125:8125'
+    volumes:
+      - '/var/run/:/host/var/run/'
+      - './:/etc/hyperledger/configtx'
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/peers/peer0.machine1.asu.edu/msp:/etc/hyperledger/fabric/msp
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/peers/peer0.machine1.asu.edu/tls:/etc/hyperledger/fabric/tls
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/users:/etc/hyperledger/msp/users
+      - 'peer0.machine1.asu.edu:/var/hyperledger/production'
+    depends_on:
+      - couchdb2
+    networks:
+      - basic
+  peer1.machine1.asu.edu:
+    container_name: peer1.machine1.asu.edu
+    image: 'vizlore/fabric-peer:latest'
+    logging:
+      options:
+        max-size: 10m
+    restart: always
+    environment:
+      - GODEBUG=netdns=go
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - 'CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:1.4'
+      #- 'CORE_PEER_CHAINCODEADDRESS=peer1.machine1.asu.edu:8052'
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - 'CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock'
+      - CORE_PEER_ID=peer1.machine1.asu.edu
+      - 'CORE_PEER_ADDRESS=peer1.machine1.asu.edu:7051'
+      - 'CORE_PEER_LISTENADDRESS=0.0.0.0:7051'
+      - 'CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052'
+      - CORE_PEER_LOCALMSPID=asuMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp/
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - 'CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984'
+      - 'CORE_PEER_GOSSIP_BOOTSTRAP=peer0.machine1.asu.edu:7051'
+      - 'CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.machine1.asu.edu:8051'
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - 'CORE_OPERATIONS_LISTENADDRESS=peer1.machine1.asu.edu:8125'
+      - CORE_METRICS_PROVIDER=statsd
+      - 'CORE_METRICS_STATSD_ADDRESS=graphite:8125'
+      - CORE_METRICS_STATSD_NETWORK=udp
+      - CORE_METRICS_STATSD_PREFIX=PEER_1
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    ports:
+      - '8051:7051'
+      - '8053:7053'
+      - '8052:8052'
+      - '9125:8125'
+    volumes:
+      - '/var/run/:/host/var/run/'
+      - './:/etc/hyperledger/configtx'
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/peers/peer1.machine1.asu.edu/msp:/etc/hyperledger/fabric/msp
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/peers/peer1.machine1.asu.edu/tls:/etc/hyperledger/fabric/tls
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/users:/etc/hyperledger/msp/users
+      - 'peer1.machine1.asu.edu:/var/hyperledger/production'
+    depends_on:
+      - couchdb2
+    networks:
+      - basic
+  peer2.machine1.asu.edu:
+    container_name: peer2.machine1.asu.edu
+    image: 'vizlore/fabric-peer:latest'
+    logging:
+      options:
+        max-size: 10m
+    restart: always
+    environment:
+      - GODEBUG=netdns=go
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
+      - 'CORE_CHAINCODE_BUILDER=hyperledger/fabric-ccenv:1.4'
+      #- 'CORE_PEER_CHAINCODEADDRESS=peer2.machine1.asu.edu:9052'
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - 'CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock'
+      - CORE_PEER_ID=peer2.machine1.asu.edu
+      - 'CORE_PEER_ADDRESS=peer2.machine1.asu.edu:7051'
+      - 'CORE_PEER_LISTENADDRESS=0.0.0.0:7051'
+      - 'CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052'
+      - CORE_PEER_LOCALMSPID=asuMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp/
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - 'CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984'
+      - 'CORE_PEER_GOSSIP_BOOTSTRAP=peer0.machine1.asu.edu:7051'
+      - 'CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.machine1.asu.edu:9051'
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      - CORE_PEER_GOSSIP_ORGLEADER=false
+      - CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - 'CORE_OPERATIONS_LISTENADDRESS=peer2.machine1.asu.edu:8125'
+      - CORE_METRICS_PROVIDER=statsd
+      - 'CORE_METRICS_STATSD_ADDRESS=graphite:8125'
+      - CORE_METRICS_STATSD_NETWORK=udp
+      - CORE_METRICS_STATSD_PREFIX=PEER_2
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: peer node start
+    ports:
+      - '9051:7051'
+      - '9053:7053'
+      - '9052:9052'
+      - '10125:8125'
+    volumes:
+      - '/var/run/:/host/var/run/'
+      - './:/etc/hyperledger/configtx'
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/peers/peer2.machine1.asu.edu/msp:/etc/hyperledger/fabric/msp
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/peers/peer2.machine1.asu.edu/tls:/etc/hyperledger/fabric/tls
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/users:/etc/hyperledger/msp/users
+      - 'peer2.machine1.asu.edu:/var/hyperledger/production'
+    depends_on:
+      - couchdb2
+    networks:
+      - basic
+  ca.machine1.asu.edu:
+    image: 'vizlore/fabric-ca:latest'
+    restart: always
+    logging:
+      options:
+        max-size: 10m
+    environment:
+      - GODEBUG=netdns=go
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca.machine1.asu.edu
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - >-
+        FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.asu.edu-cert.pem
+      - >-
+        FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/e2f082e57038281638ca975eb38f1e09424c3b968585230a43ac27f7de08d4ab_sk
+      - FABRIC_CA_SERVER_PORT=7054
+    ports:
+      - '7054:7054'
+    command: >-
+      sh -c 'fabric-ca-server start --ca.certfile
+      /etc/hyperledger/fabric-ca-server-config/ca.asu.edu-cert.pem --ca.keyfile
+      /etc/hyperledger/fabric-ca-server-config/e2f082e57038281638ca975eb38f1e09424c3b968585230a43ac27f7de08d4ab_sk
+      -b admin:adminpw -d'
+    volumes:
+      - >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/ca/:/etc/hyperledger/fabric-ca-server-config
+      - './fabric-ca-server:/etc/hyperledger/fabric-ca-server'
+    container_name: ca.machine1.asu.edu
+    networks:
+      - basic
+

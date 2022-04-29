@@ -1,0 +1,68 @@
+version: '2'
+volumes:
+  orderer0.orderer.org: {}
+networks:
+  basic:
+    name: asu
+services:
+  graphite-statsd:
+    image: vizlore/graphite-statsd
+    logging:
+      options:
+        max-size: 10m
+    container_name: graphite
+    restart: always
+    ports:
+      - '81:81'
+      - '2003-2004:2003-2004'
+      - '2023-2024:2023-2024'
+      - '8125:8125/udp'
+      - '8126:8126'
+    networks:
+      - basic
+  orderer0.orderer.org:
+    container_name: orderer0.orderer.org
+    logging:
+      options:
+        max-size: 10m
+    image: 'vizlore/fabric-orderer:latest'
+    restart: always
+    environment:
+      - GODEBUG=netdns=go
+      - FABRIC_LOGGING_SPEC=DEBUG
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - >-
+        ORDERER_GENERAL_GENESISFILE=/etc/hyperledger/configtx/config/genesis_block.pb
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=/var/hyperledger/orderer/tls/ca.crt
+      - ORDERER_KAFKA_TOPIC_REPLICATIONFACTOR=1
+      - ORDERER_KAFKA_VERBOSE=true
+      - >-
+        ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - >-
+        ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_CLUSTER_ROOTCAS=/var/hyperledger/orderer/tls/ca.crt
+      - 'ORDERER_OPERATIONS_LISTENADDRESS=orderer0.orderer.org:8125'
+      - ORDERER_METRICS_PROVIDER=statsd
+      - 'ORDERER_METRICS_STATSD_ADDRESS=graphite:8125'
+      - ORDERER_METRICS_STATSD_NETWORK=udp
+      - ORDERER_METRICS_STATSD_PREFIX=ORDERER_0
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    ports:
+      - '7050:7050'
+      - '7125:8125'
+    volumes:
+      - './:/etc/hyperledger/configtx'
+      - >-
+        ./crypto-config/ordererOrganizations/orderer.org/orderers/orderer0.orderer.org/msp:/var/hyperledger/orderer/msp
+      - >-
+        ./crypto-config/ordererOrganizations/orderer.org/orderers/orderer0.orderer.org/tls:/var/hyperledger/orderer/tls
+      - 'orderer0.orderer.org:/var/hyperledger/production/orderer'
+    networks:
+      - basic

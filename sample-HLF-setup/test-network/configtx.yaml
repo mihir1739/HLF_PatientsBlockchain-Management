@@ -1,0 +1,152 @@
+Organizations:
+ - &orderer
+  Name: Orderer
+  ID: OrdererMSP
+  MSPDir: crypto-config/ordererOrganizations/orderer.org/msp
+  Policies:
+   Readers:
+    Type: Signature
+    Rule: "OR('OrdererMSP.member')"
+   Writers:
+    Type: Signature
+    Rule: "OR('OrdererMSP.member')"
+   Admins:
+    Type: Signature
+    Rule: "OR('OrdererMSP.admin')"
+ - &asu
+  Name: asu
+  ID: asuMSP
+  MSPDir: crypto-config/peerOrganizations/asu.edu/msp
+  Policies:
+   Readers:
+    Type: Signature
+    Rule: "OR('asuMSP.admin', 'asuMSP.peer', 'asuMSP.client')"
+   Writers:
+    Type: Signature
+    Rule: "OR('asuMSP.admin', 'asuMSP.client')"
+   Admins:
+    Type: Signature
+    Rule: "OR('asuMSP.admin')"
+  
+
+Capabilities:
+ Channel: &ChannelCapabilities
+  V1_4_2: true
+ Orderer: &OrdererCapabilities
+  V1_4_2: true
+ Application: &ApplicationCapabilities
+  V1_4_2: true
+  V1_3: false
+  V1_2: false
+  V1_1: false
+
+Application: &ApplicationDefaults
+ Organizations:
+ Policies:
+  Readers:
+   Type: ImplicitMeta
+   Rule: "ANY Readers"
+  Writers:
+   Type: ImplicitMeta
+   Rule: "ANY Writers"
+  Admins:
+   Type: ImplicitMeta
+   Rule: "ANY Admins"
+ Capabilities:
+  <<: *ApplicationCapabilities
+
+Orderer: &OrdererDefaults
+ OrdererType:  solo
+ Addresses:
+  - orderer0.orderer.org:7050
+ BatchTimeout: 1s
+ BatchSize:
+  MaxMessageCount: 10
+  AbsoluteMaxBytes: 99 MB
+  PreferredMaxBytes: 512 KB
+ Policies:
+  Readers:
+   Type: ImplicitMeta
+   Rule: "ANY Readers"
+  Writers:
+   Type: ImplicitMeta
+   Rule: "ANY Writers"
+  Admins:
+   Type: ImplicitMeta
+   Rule: "ANY Admins"
+  BlockValidation:
+   Type: ImplicitMeta
+   Rule: "ANY Writers"
+    
+ Organizations:
+ Policies:
+  Readers:
+   Type: ImplicitMeta
+   Rule: "ANY Readers"
+  Writers:
+   Type: ImplicitMeta
+   Rule: "ANY Writers"
+  Admins:
+   Type: ImplicitMeta
+   Rule: "MAJORITY Admins"
+  BlockValidation:
+   Type: ImplicitMeta
+   Rule: "ANY Writers"
+
+Application: &ApplicationDefaults
+ Organizations:
+ Policies:
+  Readers:
+   Type: ImplicitMeta
+   Rule: "ANY Readers"
+  Writers:
+   Type: ImplicitMeta
+   Rule: "ANY Writers"
+  Admins:
+   Type: ImplicitMeta
+   Rule: "ANY Admins"
+  BlockValidation:
+   Type: ImplicitMeta
+   Rule: "ANY Writers"
+
+Channel: &ChannelDefaults
+ Policies:
+  # Who may invoke the 'Deliver' API
+  Readers:
+   Type: ImplicitMeta
+   Rule: "ANY Readers"
+  # Who may invoke the 'Broadcast' API
+  Writers:
+   Type: ImplicitMeta
+   Rule: "ANY Writers"
+  # By default, who may modify elements at this config level
+  Admins:
+   Type: ImplicitMeta
+   Rule: "ANY Admins"
+ Capabilities:
+  <<: *ChannelCapabilities
+
+Profiles:
+ ComposerOrdererGenesis:
+  <<: *ChannelDefaults
+  Orderer:
+   <<: *OrdererDefaults
+   Organizations:
+    - *orderer
+   Capabilities:
+    <<: *OrdererCapabilities
+  Consortiums:
+   asuchannelConsortium:
+    Organizations:
+     - *asu
+ asuchannel:
+  Consortium: asuchannelConsortium
+  <<: *ChannelDefaults
+  Application:
+   <<: *ApplicationDefaults
+   Organizations:
+     - *asu
+  Capabilities:
+   <<: *ApplicationCapabilities
+
+

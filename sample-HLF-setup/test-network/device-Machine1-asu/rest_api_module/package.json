@@ -1,0 +1,31 @@
+{
+  "name": "rest_api_module",
+  "version": "1.0.0",
+  "description": "ChainRider sample REST API for blockchain interaction",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "^10.0.0",
+    "npm": "^6.0.0"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "body-parser": "1.19.0",
+    "cookie-parser": "1.4.4",
+    "cors": "2.8.5",
+    "express": "4.17.1",
+    "express-bearer-token": "2.4.0",
+    "express-jwt": "5.3.1",
+    "express-session": "1.16.2",
+    "fabric-ca-client": "1.4.11",
+    "fabric-client": "1.4.11",
+    "fs-extra": "8.1.0",
+    "jsonwebtoken": "8.5.1",
+    "log4js": "5.0.0",
+    "curl-request": "1.1.1",
+    "os-utils": "0.0.14",
+    "md5": "2.2.1"
+  }
+}

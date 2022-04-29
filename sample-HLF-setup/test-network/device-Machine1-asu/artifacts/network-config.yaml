@@ -1,0 +1,93 @@
+name: network-config
+x-type: hlfv1
+description: Custom generated network with ChainRider.io
+version: '1.0'
+channels:
+  asuchannel:
+    orderers:
+      - orderer0.orderer.org
+    peers:
+      peer0.machine1.asu.edu:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      peer1.machine1.asu.edu:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+      peer2.machine1.asu.edu:
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+    chaincodes: []
+organizations:
+  asu:
+    secret: ff7ff4f5e61dd14603f3210a2a272c08
+    mspid: asuMSP
+    peers:
+      - peer0.machine1.asu.edu
+      - peer1.machine1.asu.edu
+      - peer2.machine1.asu.edu
+    certificateAuthorities:
+      - ca.machine1.asu.edu
+    adminPrivateKey:
+      path: >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/users/Admin@asu.edu/msp/keystore/5b9946b5559cd6bd911153cab30953db9def94776c58bb8e7df83f2a63e2dcc4_sk
+    signedCert:
+      path: >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/users/Admin@asu.edu/msp/signcerts/Admin@asu.edu-cert.pem
+orderers:
+  orderer0.orderer.org:
+    mspid: OrdererMSP
+    url: 'grpcs://orderer0.orderer.org:7050'
+    grpcOptions:
+      ssl-target-name-override: orderer0.orderer.org
+    tlsCACerts:
+      path: >-
+        ./artifacts/channel/crypto-config/ordererOrganizations/orderer.org/orderers/orderer0.orderer.org/tls/ca.crt
+    adminPrivateKey:
+      path: >-
+        ./artifacts/channel/crypto-config/ordererOrganizations/orderer.org/users/Admin@orderer.org/msp/keystore/8fa58bd1fbb96b295a6b9d3fdb8ed6a4b48dec76e4534e373fc625e76e64386c_sk
+    signedCert:
+      path: >-
+        ./artifacts/channel/crypto-config/ordererOrganizations/orderer.org/users/Admin@orderer.org/msp/signcerts/Admin@orderer.org-cert.pem
+peers:
+  peer0.machine1.asu.edu:
+    url: 'grpcs://peer0.machine1.asu.edu:7051'
+    eventUrl: 'grpcs://peer0.machine1.asu.edu:7053'
+    grpcOptions:
+      ssl-target-name-override: peer0.machine1.asu.edu
+    tlsCACerts:
+      path: >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/peers/peer0.machine1.asu.edu/tls/ca.crt
+  peer1.machine1.asu.edu:
+    url: 'grpcs://peer1.machine1.asu.edu:8051'
+    eventUrl: 'grpcs://peer1.machine1.asu.edu:8053'
+    grpcOptions:
+      ssl-target-name-override: peer1.machine1.asu.edu
+    tlsCACerts:
+      path: >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/peers/peer1.machine1.asu.edu/tls/ca.crt
+  peer2.machine1.asu.edu:
+    url: 'grpcs://peer2.machine1.asu.edu:9051'
+    eventUrl: 'grpcs://peer2.machine1.asu.edu:9053'
+    grpcOptions:
+      ssl-target-name-override: peer2.machine1.asu.edu
+    tlsCACerts:
+      path: >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/peers/peer2.machine1.asu.edu/tls/ca.crt
+certificateAuthorities:
+  ca.machine1.asu.edu:
+    url: 'https://ca.machine1.asu.edu:7054'
+    httpOptions:
+      verify: false
+    tlsCACerts:
+      path: >-
+        ./artifacts/channel/crypto-config/peerOrganizations/asu.edu/ca/ca.asu.edu-cert.pem
+    registrar:
+      - enrollId: admin
+        enrollSecret: adminpw
+        caName: ca.machine1.asu.edu

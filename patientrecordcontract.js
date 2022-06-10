@@ -45,12 +45,7 @@ class PatientRecordContract extends Contract {
         console.log('Instantiated the patient record smart contract.');
     }
 
-    //  TASK-7: Implement the unknownTransaction to throw an error when
-    //  a function is called that does not exist in the contract.
-    //  The error message should be: 'Function name missing'.
-    //  Read more about unknownTransaction here: https://hyperledger.github.io/fabric-chaincode-node/master/api/fabric-contract-api.Contract.html
     async unknownTransaction(ctx){
-        // GRADED FUNCTION
         throw new Error('Function name missing')
     }
 
@@ -67,7 +62,7 @@ class PatientRecordContract extends Contract {
 
     }
     /**
-     * Create a patient record
+     * patient record
      * @param {Context} ctx the transaction context
      * @param {String} username username
      * @param {String} name name
@@ -77,8 +72,6 @@ class PatientRecordContract extends Contract {
      */
     async createPatientRecord(ctx,username,name,dob,gender,blood_type){
         let precord = PatientRecord.createInstance(username,name,dob,gender,blood_type);
-        //TASK 0
-        // Add patient record by calling the method in the PRecordList
         await ctx.patientRecordList.addPRecord(precord);
         return precord.toBuffer();
     }
@@ -100,9 +93,6 @@ class PatientRecordContract extends Contract {
      */
     async updateCheckupDate(ctx,username,name,lastCheckupDate){
         let precordKey = PatientRecord.makeKey([username,name]);
-        //TASK-3: Use a method from patientRecordList to read a record by key
-        //Use set_last_checkup_date from PatientRecord to update the last_checkup_date field
-        //Use updatePRecord from patientRecordList to update the record on the ledger
         let precord = await ctx.patientRecordList.getPRecord(precordKey);
         precord.setlastCheckupDate(lastCheckupDate);
         await ctx.patientRecordList.updatePRecord(precord);
@@ -163,11 +153,7 @@ class PatientRecordContract extends Contract {
      * @param {Context} ctx the transaction context
      * @param {String} gender gender to be queried
     */
-    // Graded Function
     async queryByGender(ctx, gender) {
-    //      TASK-4: Complete the query String JSON object to query using the genderIndex (META-INF folder)
-    //      Construct the JSON couch DB selector queryString that uses genderIndex
-    //      Pass the Query string built to queryWithQueryString
     const queryString = {
         selector : {gender : gender},
         use_index: "genderIndex"
@@ -184,10 +170,6 @@ class PatientRecordContract extends Contract {
     */
     // Graded Function
     async queryByBlood_Type(ctx, blood_type) {
-    //      TASK-5: Write a new index for bloodType and write a CouchDB selector query that uses it
-    //      to query by bloodType
-    //      Construct the JSON couch DB selector queryString that uses blood_typeIndex
-    //      Pass the Query string built to queryWithQueryString
     const queryString = {
         selector : {blood_type : blood_type},
         use_index: "blood_typeIndex"
@@ -203,12 +185,7 @@ class PatientRecordContract extends Contract {
      * @param {Context} ctx the transaction context
      * @param {String} blood_type blood_type to queried
     */
-    //Grade Function
     async queryByBlood_Type_Dual(ctx, blood_type1, blood_type2) {
-    //      TASK-6: Write a CouchDB selector query that queries using two blood types
-    //      and uses the index created for bloodType
-    //      Construct the JSON couch DB selector queryString that uses two blood type indexe
-    //      Pass the Query string built to queryWithQueryString
     const queryString = {
         selector : {blood_type : {$in:[blood_type1,blood_type2]}},
         use_index: "blood_typeIndex"
